@@ -1,6 +1,12 @@
 package com.xiaopo.flying.puzzleview_kotlin
 
 import android.graphics.PointF
+import android.provider.MediaStore.Audio.Radio
+import android.R.attr.x
+import android.R.attr.y
+import android.graphics.Matrix
+import android.graphics.RectF
+
 
 /**
  * @author wupanjie
@@ -18,6 +24,9 @@ val CD: PointF = PointF()
 val CM: PointF = PointF()
 val DA: PointF = PointF()
 val DM: PointF = PointF()
+
+val matrixValues = FloatArray(9)
+val tempMatrix = Matrix()
 
 fun Line.contains(x: Float, y: Float, extra: Float): Boolean {
   if (direction == Line.Companion.VERTICAL) {
@@ -63,6 +72,37 @@ fun Line.contains(x: Float, y: Float, extra: Float): Boolean {
 
   DM.x = x - D.x;
   DM.y = y - D.y;
+
+  return AB x AM > 0 &&
+      BC x BM > 0 &&
+      CD x CM > 0 &&
+      DA x DM > 0
+}
+
+fun Area.contains(x: Float, y: Float): Boolean {
+  AB.x = rightTop.x - leftTop.x;
+  AB.y = rightTop.y - leftTop.y;
+
+  AM.x = x - leftTop.x;
+  AM.y = y - leftTop.y;
+
+  BC.x = rightBottom.x - rightTop.x;
+  BC.y = rightBottom.y - rightTop.y;
+
+  BM.x = x - rightTop.x;
+  BM.y = y - rightTop.y;
+
+  CD.x = leftBottom.x - rightBottom.x;
+  CD.y = leftBottom.y - rightBottom.y;
+
+  CM.x = x - rightBottom.x;
+  CM.y = y - rightBottom.y;
+
+  DA.x = leftTop.x - leftBottom.x;
+  DA.y = leftTop.y - leftBottom.y;
+
+  DM.x = x - leftBottom.x;
+  DM.y = y - leftBottom.y;
 
   return AB x AM > 0 &&
       BC x BM > 0 &&
@@ -132,35 +172,51 @@ infix fun PointF.horizontalTo(that: PointF) = Line.Companion.line {
   end = that
 }
 
+fun PointF.between(start: PointF, end: PointF, direction: Int, radio: Float) = apply {
+  val deltaY = Math.abs(start.y - end.y)
+  val deltaX = Math.abs(start.x - end.x)
+  val maxY = Math.max(start.y, end.y)
+  val minY = Math.min(start.y, end.y)
+  val maxX = Math.max(start.x, end.x)
+  val minX = Math.min(start.x, end.x)
 
-fun Area.contains(x: Float, y: Float): Boolean {
-  AB.x = rightTop.x - leftTop.x;
-  AB.y = rightTop.y - leftTop.y;
+  when (direction) {
+    Line.HORIZONTAL -> {
+      x = minX + deltaX * radio;
+      if (start.y < end.y) {
+        y = minY + radio * deltaY;
+      } else {
+        y = maxY - radio * deltaY;
+      }
+    }
 
-  AM.x = x - leftTop.x;
-  AM.y = y - leftTop.y;
-
-  BC.x = rightBottom.x - rightTop.x;
-  BC.y = rightBottom.y - rightTop.y;
-
-  BM.x = x - rightTop.x;
-  BM.y = y - rightTop.y;
-
-  CD.x = leftBottom.x - rightBottom.x;
-  CD.y = leftBottom.y - rightBottom.y;
-
-  CM.x = x - rightBottom.x;
-  CM.y = y - rightBottom.y;
-
-  DA.x = leftTop.x - leftBottom.x;
-  DA.y = leftTop.y - leftBottom.y;
-
-  DM.x = x - leftBottom.x;
-  DM.y = y - leftBottom.y;
-
-  return AB x AM > 0 &&
-      BC x BM > 0 &&
-      CD x CM > 0 &&
-      DA x DM > 0
+    Line.VERTICAL -> {
+      y = minY + deltaY * radio;
+      if (start.x < end.x) {
+        x = minX + radio * deltaX;
+      } else {
+        x = maxX - radio * deltaX;
+      }
+    }
+  }
 }
 
+fun FloatArray.mappedWith(matrix: Matrix, drawablePoints: FloatArray) = apply {
+  matrix.mapPoints(this, drawablePoints)
+}
+
+fun RectF.mappedWith(matrix: Matrix, drawableBounds: RectF) = apply {
+  matrix.mapRect(this, drawableBounds)
+}
+//operator fun Matrix.get(index: Int): Float {
+//  getValues(matrixValues)
+//  return matrixValues[index]
+//}
+//
+//val Matrix.scale
+//  get() = Math.sqrt(
+//      Math.pow(get(Matrix.MSCALE_X).toDouble(), 2.toDouble()) +
+//          Math.pow(get(Matrix.MSCALE_Y).toDouble(), 2.toDouble())).toFloat()
+//
+//val Matrix.angle
+//  get() = Math

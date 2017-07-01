@@ -28,6 +28,8 @@ class MainActivity : AppCompatActivity() {
     puzzleLayout.setOuterBounds(RectF(0f, 0f, 1080f, 1080f))
 
     puzzleLayout.layout()
+
+    print("HHH")
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {

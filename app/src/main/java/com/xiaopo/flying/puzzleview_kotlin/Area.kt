@@ -1,6 +1,9 @@
 package com.xiaopo.flying.puzzleview_kotlin
 
+import android.graphics.Path
 import android.graphics.PointF
+import android.graphics.Rect
+import android.graphics.RectF
 
 /**
  * TODO (support padding)
@@ -16,6 +19,9 @@ class Area private constructor(
     var rightTop: PointF,
     var rightBottom: PointF
 ) {
+  private val path = Path()
+  private val rect = RectF()
+
   constructor(src: Area) :
       this(src.leftLine,
           src.topLine,
@@ -45,14 +51,30 @@ class Area private constructor(
         return@Comparator -1
       } else if (lhs.top == rhs.top) {
         if (lhs.left < rhs.left) {
-          return@Comparator -1;
+          return@Comparator -1
         } else {
-          return@Comparator 1;
+          return@Comparator 1
         }
       } else {
-        return@Comparator 1;
+        return@Comparator 1
       }
     }
+  }
+
+  fun createPath(): Path {
+    path.reset()
+    path.moveTo(leftTop.x, leftTop.y)
+    path.lineTo(rightTop.x, rightTop.y)
+    path.lineTo(rightBottom.x, rightBottom.y)
+    path.lineTo(leftBottom.x, leftBottom.y)
+    path.lineTo(leftTop.x, leftTop.y)
+
+    return path
+  }
+
+  fun getAreaRect(): RectF {
+    rect.set(left, top, right, bottom)
+    return rect
   }
 
   class Builder private constructor() {
@@ -113,9 +135,9 @@ val Area.centerPoint
 infix fun Area.contains(line: Line)
     = line == leftLine || line == topLine || line == rightLine || line == bottomLine
 
-infix fun Area.cutBy(line: Line) : List<Area> {
+infix fun Area.cutBy(line: Line): List<Area> {
   val spiltAreas = ArrayList<Area>(2)
-  when(line.direction){
+  when (line.direction) {
     Line.HORIZONTAL -> {
       val one = Area(this)
       one.bottomLine = line

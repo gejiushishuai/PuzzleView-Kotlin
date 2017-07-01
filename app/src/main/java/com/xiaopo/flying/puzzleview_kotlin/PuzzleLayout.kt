@@ -88,8 +88,8 @@ open class PuzzleLayout(val init: PuzzleLayout.() -> Unit) {
 fun PuzzleLayout.createHorizontalLine(position: Int, radio: Float) = Line.Companion.line {
   val area = this@createHorizontalLine[position]
   direction = Line.HORIZONTAL
-  start = PointF(area.left, area.height * radio + area.top)
-  end = PointF(area.right, area.height * radio + area.top)
+  start = PointF().between(area.leftTop, area.leftBottom, Line.VERTICAL, radio)
+  end = PointF().between(area.rightTop, area.rightBottom, Line.VERTICAL, radio)
 
   attachStartLine = area.leftLine
   attachEndLine = area.rightLine
@@ -101,8 +101,8 @@ fun PuzzleLayout.createHorizontalLine(position: Int, radio: Float) = Line.Compan
 fun PuzzleLayout.createVerticalLine(position: Int, radio: Float) = Line.Companion.line {
   val area = this@createVerticalLine[position]
   direction = Line.VERTICAL
-  start = PointF(area.width * radio + area.left, area.top)
-  end = PointF(area.width * radio + area.left, area.bottom)
+  start = PointF().between(area.leftTop, area.rightTop, Line.HORIZONTAL, radio)
+  end = PointF().between(area.leftBottom, area.rightBottom, Line.HORIZONTAL, radio)
 
   attachStartLine = area.topLine
   attachEndLine = area.bottomLine
@@ -120,7 +120,7 @@ private fun List<Line>.updateLineLimit() {
           || it.attachStartLine != line.attachStartLine
           || it.attachEndLine != line.attachEndLine
     }.forEach {
-      if (it.direction == Line.Companion.HORIZONTAL) {
+      if (it.direction == Line.HORIZONTAL) {
         if (it.minY > line.lowerLine?.maxY ?: 0f && it.maxY < line.minY) {
           line.lowerLine = it
         }
@@ -139,29 +139,3 @@ private fun List<Line>.updateLineLimit() {
     }
   }
 }
-
-//private fun List<Line>.updateUpperLine(line: Line) {
-//  filter {
-//    it == line
-//        || it.direction != line.direction
-//        || it.attachStartLine != line.attachStartLine
-//        || it.attachEndLine != line.attachEndLine
-//  }.forEach {
-//      if (it.direction == Line.HORIZONTAL) {
-//        if (it.minY > line.lowerLine!!.maxY && it.maxY < line.minY) {
-//          line.lowerLine = it
-//        }
-//        if (it.maxY < line.upperLine!!.minY && it.minY > line.maxY) {
-//          line.upperLine = it
-//        }
-//      } else {
-//        if (it.minX > line.lowerLine!!.maxX && it.maxX < line.minX) {
-//          line.lowerLine = it
-//        }
-//
-//        if (it.maxX < line.upperLine!!.minX && it.minX > line.maxX) {
-//          line.upperLine = it
-//        }
-//      }
-//  }
-//}
