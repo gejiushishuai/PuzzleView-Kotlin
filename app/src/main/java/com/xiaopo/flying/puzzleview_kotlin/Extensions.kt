@@ -160,17 +160,11 @@ fun PointF.intersectsWith(lineOne: Line, lineTwo: Line) {
 
 infix fun PointF.x(point: PointF) = x * point.y - y * point.x
 
-infix fun PointF.verticalTo(that: PointF) = Line.Companion.line {
-  direction = Line.VERTICAL
-  start = this@verticalTo
-  end = that
-}
+infix fun PointF.verticalTo(that: PointF)
+    = Line(direction = Line.VERTICAL, start = this, end = that)
 
-infix fun PointF.horizontalTo(that: PointF) = Line.Companion.line {
-  direction = Line.HORIZONTAL
-  start = this@horizontalTo
-  end = that
-}
+infix fun PointF.horizontalTo(that: PointF)
+    = Line(direction = Line.HORIZONTAL, start = this, end = that)
 
 fun PointF.between(start: PointF, end: PointF, direction: Int, radio: Float) = apply {
   val deltaY = Math.abs(start.y - end.y)
@@ -208,15 +202,3 @@ fun FloatArray.mappedWith(matrix: Matrix, drawablePoints: FloatArray) = apply {
 fun RectF.mappedWith(matrix: Matrix, drawableBounds: RectF) = apply {
   matrix.mapRect(this, drawableBounds)
 }
-//operator fun Matrix.get(index: Int): Float {
-//  getValues(matrixValues)
-//  return matrixValues[index]
-//}
-//
-//val Matrix.scale
-//  get() = Math.sqrt(
-//      Math.pow(get(Matrix.MSCALE_X).toDouble(), 2.toDouble()) +
-//          Math.pow(get(Matrix.MSCALE_Y).toDouble(), 2.toDouble())).toFloat()
-//
-//val Matrix.angle
-//  get() = Math

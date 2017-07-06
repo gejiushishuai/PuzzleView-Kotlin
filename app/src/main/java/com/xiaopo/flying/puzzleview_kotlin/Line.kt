@@ -5,55 +5,19 @@ import android.graphics.PointF
 /**
  * @author wupanjie
  */
-class Line private constructor(
+class Line(
     val direction: Int,
     val start: PointF,
     val end: PointF,
-    var upperLine: Line?,
-    var lowerLine: Line?,
-    var attachStartLine: Line?,
-    var attachEndLine: Line?) {
-
-  private constructor(builder: Line.Builder) :
-      this(builder.direction,
-          builder.start,
-          builder.end,
-          builder.upperLine,
-          builder.lowerLine,
-          builder.attachStartLine,
-          builder.attachEndLine)
+    var upperLine: Line? = null,
+    var lowerLine: Line? = null,
+    var attachStartLine: Line? = null,
+    var attachEndLine: Line? = null) {
 
   companion object {
     // 线的方向
     val HORIZONTAL = 0
     val VERTICAL = 1
-
-    fun line(init: Builder.() -> Unit) = Line.Builder(
-        init).build()
-  }
-
-  class Builder private constructor() {
-    constructor(init: Builder.() -> Unit) : this() {
-      init()
-    }
-
-    var direction: Int = Line.HORIZONTAL
-    lateinit var start: PointF
-    lateinit var end: PointF
-    var upperLine: Line? = null
-    var lowerLine: Line? = null
-    var attachStartLine: Line? = null
-    var attachEndLine: Line? = null
-
-    fun direction(init: Builder.() -> Int) = apply { direction = init() }
-    fun start(init: Builder.() -> PointF) = apply { start = init() }
-    fun end(init: Builder.() -> PointF) = apply { end = init() }
-    fun upperLine(init: Builder.() -> Line) = apply { upperLine = init() }
-    fun lowerLine(init: Builder.() -> Line) = apply { lowerLine = init() }
-    fun attachStartLine(init: Builder.() -> Line) = apply { attachStartLine = init() }
-    fun attachEndLine(init: Builder.() -> Line) = apply { attachEndLine = init() }
-
-    fun build() = Line(this);
   }
 }
 

@@ -9,15 +9,15 @@ import android.graphics.RectF
  * TODO (support padding)
  * @author wupanjie
  */
-class Area private constructor(
+class Area(
     var leftLine: Line,
     var topLine: Line,
     var rightLine: Line,
     var bottomLine: Line,
-    var leftTop: PointF,
-    var leftBottom: PointF,
-    var rightTop: PointF,
-    var rightBottom: PointF
+    var leftTop: PointF = PointF(),
+    var leftBottom: PointF = PointF(),
+    var rightTop: PointF = PointF(),
+    var rightBottom: PointF = PointF()
 ) {
   private val path = Path()
   private val rect = RectF()
@@ -32,20 +32,8 @@ class Area private constructor(
           src.rightTop,
           src.rightBottom)
 
-  constructor(builder: Area.Builder) :
-      this(builder.leftLine,
-          builder.topLine,
-          builder.rightLine,
-          builder.bottomLine,
-          builder.leftTop,
-          builder.leftBottom,
-          builder.rightTop,
-          builder.rightBottom)
 
   companion object {
-    fun area(init: Area.Builder.() -> Unit) = Area.Builder(
-        init).build()
-
     val comparator = Comparator { lhs: Area, rhs: Area ->
       if (lhs.top < rhs.top) {
         return@Comparator -1
@@ -75,33 +63,6 @@ class Area private constructor(
   fun getAreaRect(): RectF {
     rect.set(left, top, right, bottom)
     return rect
-  }
-
-  class Builder private constructor() {
-    constructor(init: Area.Builder.() -> Unit) : this() {
-      init()
-    }
-
-    lateinit var leftLine: Line
-    lateinit var topLine: Line
-    lateinit var rightLine: Line
-    lateinit var bottomLine: Line
-    lateinit var leftTop: PointF
-    lateinit var leftBottom: PointF
-    lateinit var rightTop: PointF
-    lateinit var rightBottom: PointF
-
-    fun leftLine(init: Area.Builder.() -> Line) = apply { leftLine = init() }
-    fun topLine(init: Area.Builder.() -> Line) = apply { topLine = init() }
-    fun rightLine(init: Area.Builder.() -> Line) = apply { rightLine = init() }
-    fun bottomLine(init: Area.Builder.() -> Line) = apply { bottomLine = init() }
-
-    fun leftTop(init: Area.Builder.() -> PointF) = apply { leftTop = init() }
-    fun leftBottom(init: Area.Builder.() -> PointF) = apply { leftBottom = init() }
-    fun rightTop(init: Area.Builder.() -> PointF) = apply { rightTop = init() }
-    fun rightBottom(init: Area.Builder.() -> PointF) = apply { rightBottom = init() }
-
-    fun build() = Area(this)
   }
 }
 

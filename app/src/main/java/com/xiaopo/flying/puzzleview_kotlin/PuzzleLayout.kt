@@ -2,6 +2,9 @@ package com.xiaopo.flying.puzzleview_kotlin
 
 import android.graphics.PointF
 import android.graphics.RectF
+import com.xiaopo.flying.puzzleview_kotlin.R.id.end
+import com.xiaopo.flying.puzzleview_kotlin.R.id.start
+import kotlin.coroutines.experimental.EmptyCoroutineContext.plus
 
 /**
  * @author wupanjie
@@ -43,17 +46,17 @@ open class PuzzleLayout(val init: PuzzleLayout.() -> Unit) {
     outerLines.add(lineRight)
     outerLines.add(lineBottom)
 
-    outerArea = Area.Companion.area {
-      leftLine = lineLeft
-      topLine = lineTop
-      rightLine = lineRight
-      bottomLine = lineBottom
+    outerArea = Area(
+        leftLine = lineLeft,
+        topLine = lineTop,
+        rightLine = lineRight,
+        bottomLine = lineBottom,
 
-      leftTop = A
-      rightTop = B
-      rightBottom = C
-      leftBottom = D
-    }
+        leftTop = A,
+        rightTop = B,
+        rightBottom = C,
+        leftBottom = D
+    )
 
     areas.clear()
     areas.add(outerArea)
@@ -85,30 +88,30 @@ open class PuzzleLayout(val init: PuzzleLayout.() -> Unit) {
   }
 }
 
-fun PuzzleLayout.createHorizontalLine(position: Int, radio: Float) = Line.Companion.line {
+fun PuzzleLayout.createHorizontalLine(position: Int, radio: Float): Line {
   val area = this@createHorizontalLine[position]
-  direction = Line.HORIZONTAL
-  start = PointF().between(area.leftTop, area.leftBottom, Line.VERTICAL, radio)
-  end = PointF().between(area.rightTop, area.rightBottom, Line.VERTICAL, radio)
+  return Line(
+      direction = Line.HORIZONTAL,
+      start = PointF().between(area.leftTop, area.leftBottom, Line.VERTICAL, radio),
+      end = PointF().between(area.rightTop, area.rightBottom, Line.VERTICAL, radio),
+      attachStartLine = area.leftLine,
+      attachEndLine = area.rightLine,
 
-  attachStartLine = area.leftLine
-  attachEndLine = area.rightLine
-
-  upperLine = area.bottomLine
-  lowerLine = area.topLine
+      upperLine = area.bottomLine,
+      lowerLine = area.topLine)
 }
 
-fun PuzzleLayout.createVerticalLine(position: Int, radio: Float) = Line.Companion.line {
+fun PuzzleLayout.createVerticalLine(position: Int, radio: Float): Line {
   val area = this@createVerticalLine[position]
-  direction = Line.VERTICAL
-  start = PointF().between(area.leftTop, area.rightTop, Line.HORIZONTAL, radio)
-  end = PointF().between(area.leftBottom, area.rightBottom, Line.HORIZONTAL, radio)
+  return Line(
+      direction = Line.VERTICAL,
+      start = PointF().between(area.leftTop, area.rightTop, Line.HORIZONTAL, radio),
+      end = PointF().between(area.leftBottom, area.rightBottom, Line.HORIZONTAL, radio),
+      attachStartLine = area.topLine,
+      attachEndLine = area.bottomLine,
 
-  attachStartLine = area.topLine
-  attachEndLine = area.bottomLine
-
-  upperLine = area.rightLine
-  lowerLine = area.leftLine
+      upperLine = area.rightLine,
+      lowerLine = area.leftLine)
 }
 
 private fun List<Line>.updateLineLimit() {
